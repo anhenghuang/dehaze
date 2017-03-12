@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
 import cv2
 import numpy as np
+import argparse
 
 
 def dark_channel(img, size = 15):
@@ -24,8 +24,7 @@ def get_trans(img, atom, w = 0.95):
     return t
 
 
-
-def guidedFilter(p, i, r, e):
+def guided_filter(p, i, r, e):
     """
     :param p: input image
     :param i: guidance image
@@ -52,14 +51,14 @@ def guidedFilter(p, i, r, e):
     return q
 
 
-def dehaze(path):
+def dehaze(path, output = None):
     im = cv2.imread(path)
     img = im.astype('float64') / 255
     img_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype('float64') / 255
 
     atom = get_atmo(img)
     trans = get_trans(img, atom)
-    trans_guided = guidedFilter(trans, img_gray, 20, 0.0001)
+    trans_guided = guided_filter(trans, img_gray, 20, 0.0001)
     trans_guided = cv2.max(trans_guided, 0.25)
 
     result = np.empty_like(img)
@@ -69,6 +68,17 @@ def dehaze(path):
     cv2.imshow("source",img)
     cv2.imshow("result", result)
     cv2.waitKey()
+    if output is not None:
+        cv2.imwrite(output, result * 255)
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input')
+parser.add_argument('-o', '--output')
+args = parser.parse_args()
+
 
 if __name__ == '__main__':
-    dehaze('1.png')
+    if args.input is None:
+        dehaze('1.png')
+    dehaze(args.input, args.output)
