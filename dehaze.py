@@ -1,13 +1,7 @@
+# -*- coding: utf-8 -*-
+
 import cv2
 import numpy as np
-
-
-def read_img(path):
-    try:
-        img = cv2.imread(path)
-    except:
-        return None
-    return img.astype('float64') / 255
 
 
 def dark_channel(img, size = 15):
@@ -30,14 +24,47 @@ def get_trans(img, atom, w = 0.95):
     return t
 
 
+
+def guidedFilter(p, i, r, e):
+    """
+    :param p: input image
+    :param i: guidance image
+    :param r: radius
+    :param e: regularization
+    :return: filtering output q
+    """
+    #1
+    mean_I = cv2.boxFilter(i, cv2.CV_64F, (r, r))
+    mean_p = cv2.boxFilter(p, cv2.CV_64F, (r, r))
+    corr_I = cv2.boxFilter(i * i, cv2.CV_64F, (r, r))
+    corr_Ip = cv2.boxFilter(i * p, cv2.CV_64F, (r, r))
+    #2
+    var_I = corr_I - mean_I * mean_I
+    cov_Ip = corr_Ip - mean_I * mean_p
+    #3
+    a = cov_Ip / (var_I + e)
+    b = mean_p - a * mean_I
+    #4
+    mean_a = cv2.boxFilter(a, cv2.CV_64F, (r, r))
+    mean_b = cv2.boxFilter(b, cv2.CV_64F, (r, r))
+    #5
+    q = mean_a * i + mean_b
+    return q
+
+
 def dehaze(path):
-    img = read_img(path)
+    im = cv2.imread(path)
+    img = im.astype('float64') / 255
+    img_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY).astype('float64') / 255
+
     atom = get_atmo(img)
     trans = get_trans(img, atom)
+    trans_guided = guidedFilter(trans, img_gray, 20, 0.0001)
+    trans_guided = cv2.max(trans_guided, 0.25)
 
     result = np.empty_like(img)
     for i in range(3):
-        result[:, :, i] = (img[:, :, i] - atom) / trans + atom
+        result[:, :, i] = (img[:, :, i] - atom) / trans_guided + atom
 
     cv2.imshow("source",img)
     cv2.imshow("result", result)
