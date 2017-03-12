@@ -14,3 +14,4 @@ Realizing Kaiming He's paper 'Single Image Haze Removal Using Dark Channel Prior
 ![原图](https://github.com/anhenghuang/dehaze/blob/master/image/tiananmen.png?raw=true)| ![结果](https://github.com/anhenghuang/dehaze/blob/master/image/tiananmen_result.png?raw=true)
 ![原图](https://github.com/anhenghuang/dehaze/blob/master/image/canon3.bmp?raw=true)| ![结果](https://github.com/anhenghuang/dehaze/blob/master/image/canon3_result.bmp?raw=true)
 ![原图](https://github.com/anhenghuang/dehaze/blob/master/image/trees.png?raw=true)| ![结果](https://github.com/anhenghuang/dehaze/blob/master/image/trees_result.png?raw=true)
+![原图](https://github.com/anhenghuang/dehaze/blob/master/image/foggyHouse.jpg?raw=true)| ![结果](https://github.com/anhenghuang/dehaze/blob/master/image/foggyHouse_result.jpg?raw=true)
