@@ -80,5 +80,6 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     if args.input is None:
-        dehaze('1.png')
-    dehaze(args.input, args.output)
+        dehaze('image/canon3.bmp')
+    else:
+        dehaze(args.input, args.output)
